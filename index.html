@@ -1,30 +1,40 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TechFlow - Modern Web Development Hub</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechFlow | Web Dev Resources & Tutorials</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-      .accordion-content {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.3s ease-in-out;
-        will-change: max-height;
-      }
-      
-      #mobile-menu {
-        transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-      }
-      
-      button:focus {
-        outline: 2px solid #3b82f6;
-        outline-offset: 2px;
-      }
-      
-      input:focus, textarea:focus {
-        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
-      }
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      will-change: max-height;
+    }
+    
+    #mobile-menu {
+      transition: all 0.3s;
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    
+    #mobile-menu.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    button:focus, a:focus {
+      outline: 2px solid #3b82f6;
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+    
+    input:focus, 
+    textarea:focus {
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+      border-color: #3b82f6;
+    }
       .card-hover:hover {
         transform: translateY(-8px);
         transition: all 0.3s ease;
@@ -431,65 +441,82 @@
     </style>
     
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-        const mobileMenu = document.getElementById('mobile-menu');
-        
-        if (mobileMenuToggle && mobileMenu) {
-          function toggleMobileMenu() {
-            const isExpanded = mobileMenuToggle.getAttribute('aria-expanded') === 'true';
-            mobileMenuToggle.setAttribute('aria-expanded', !isExpanded);
-            mobileMenu.classList.toggle('hidden');
-            document.body.style.overflow = isExpanded ? 'auto' : 'hidden';
-          }
-
-          mobileMenuToggle.addEventListener('click', toggleMobileMenu);
-          
-          document.querySelectorAll('#mobile-menu a').forEach(link => {
-            link.addEventListener('click', () => {
-              if (!mobileMenu.classList.contains('hidden')) {
-                toggleMobileMenu();
-              }
-            });
-          });
+    document.addEventListener('DOMContentLoaded', function() {
+      const menuBtn = document.getElementById('mobile-menu-toggle');
+      const mobileNav = document.getElementById('mobile-menu');
+      
+      if (menuBtn && mobileNav) {
+        function toggleMenu() {
+          const expanded = menuBtn.getAttribute('aria-expanded') === 'true';
+          menuBtn.setAttribute('aria-expanded', !expanded);
+          mobileNav.classList.toggle('hidden');
+          mobileNav.classList.toggle('active');
+          document.body.style.overflow = expanded ? '' : 'hidden';
         }
 
-        const faqButtons = document.querySelectorAll('.accordion-toggle');
+        menuBtn.addEventListener('click', toggleMenu);
         
-        function closeOtherAccordions(currentButton) {
-          faqButtons.forEach(button => {
-            if (button !== currentButton) {
-              button.setAttribute('aria-expanded', 'false');
-              const content = button.nextElementSibling;
-              content.style.maxHeight = '0';
-            }
-          });
-        }
-        
-        faqButtons.forEach(button => {
-          const isFirst = button === faqButtons[0];
-          button.setAttribute('aria-expanded', isFirst ? 'true' : 'false');
-          
-          if (isFirst) {
-            const content = button.nextElementSibling;
-            content.style.maxHeight = content.scrollHeight + 'px';
-          }
-          
-          button.addEventListener('click', function() {
-            const isExpanded = this.getAttribute('aria-expanded') === 'true';
-            const content = this.nextElementSibling;
-            
-            this.setAttribute('aria-expanded', !isExpanded);
-            
-            if (!isExpanded) {
-              content.style.maxHeight = content.scrollHeight + 'px';
-              closeOtherAccordions(this);
-            } else {
-              content.style.maxHeight = '0';
+        document.querySelectorAll('#mobile-menu a').forEach(function(link) {
+          link.addEventListener('click', function() {
+            if (!mobileNav.classList.contains('hidden')) {
+              toggleMenu();
             }
           });
         });
+      }
+
+      const faqItems = document.querySelectorAll('.accordion-toggle');
+      
+      function closeSiblings(current) {
+        faqItems.forEach(function(item) {
+          if (item !== current) {
+            item.setAttribute('aria-expanded', 'false');
+            const content = item.nextElementSibling;
+            content.style.maxHeight = '0';
+          }
+        });
+      }
+      
+      faqItems.forEach(function(btn, index) {
+        const isOpen = index === 0;
+        btn.setAttribute('aria-expanded', isOpen);
+        
+        if (isOpen) {
+          const content = btn.nextElementSibling;
+          content.style.maxHeight = content.scrollHeight + 'px';
+        }
+        
+        btn.addEventListener('click', function() {
+          const expanded = this.getAttribute('aria-expanded') === 'true';
+          const content = this.nextElementSibling;
+          
+          this.setAttribute('aria-expanded', !expanded);
+          
+          if (!expanded) {
+            content.style.maxHeight = content.scrollHeight + 'px';
+            closeSiblings(this);
+          } else {
+            content.style.maxHeight = '0';
+          }
+        });
       });
+      
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+          e.preventDefault();
+          const targetId = this.getAttribute('href');
+          if (targetId === '#') return;
+          
+          const targetEl = document.querySelector(targetId);
+          if (targetEl) {
+            window.scrollTo({
+              top: targetEl.offsetTop - 80,
+              behavior: 'smooth'
+            });
+          }
+        });
+      });
+    });
     </script>
 
   </body>
